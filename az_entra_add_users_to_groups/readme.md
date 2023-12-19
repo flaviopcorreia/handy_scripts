@@ -19,7 +19,3 @@ Get-AzADGroupMember -GroupObjectId $targetgroup | export-csv 'path:\backup.csv'
 $files = Get-Content "path:\users.txt"
 
 5- Execução do script:
-
-foreach ($file in $files) { 
-  $move = Add-AzADGroupMember -TargetGroupObjectId $targetgroup -MemberObjectId $file 
-}
