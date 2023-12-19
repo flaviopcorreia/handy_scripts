@@ -5,10 +5,10 @@ $targetgroup = 'ID_AQUI'
 Get-AzADGroupMember -GroupObjectId $targetgroup | Measure-Object
 
 #Fazer backup dos membros do grupo em um arquivo CSV.
-Get-AzADGroupMember -GroupObjectId $targetgroup | export-csv 'PATH:\output.csv' 
+Get-AzADGroupMember -GroupObjectId $targetgroup | export-csv 'path:\backup.csv' 
 
-#Adicionar os usuários ao grupo. No item "PATH:\file.txt" abaixo, adicionar o path do arquivo txt que contenha o ID dos usuários que queira adicionar aos grupo.
-$files = Get-Content "PATH:\file.txt"
+#Adicionar os usuários ao grupo. No item "path:\file.txt" abaixo, adicionar o path do arquivo txt que contenha o ID dos usuários que queira adicionar aos grupo.
+$files = Get-Content "path:\file.txt"
 
 #Função para adicionar os usuários ao respectivo grupo
 foreach ($file in $files) {
