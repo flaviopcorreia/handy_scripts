@@ -2,7 +2,7 @@
 
 1- Antes de utilizar este script, é necessário coletar o ID do usuários que queira adicionar ao grupo e colar em um arquivo chamado users.txt.
 
-2- Posteriormente, edite o script em qualquer editor de sua preferência (Sugestão Windows PowerShell ISE). Em seguida substitua o campo abaixo com o ID do groupo que deseja mover os usuários:
+2- Posteriormente, edite o script em qualquer editor de sua preferência (Sugestão Windows PowerShell ISE). Em seguida substitua o campo abaixo com o ID do grupo que deseja mover os usuários:
 
 $targetgroup = 'ID_AQUI'
 
