@@ -9,15 +9,15 @@ Obs: Para obter o ID do grupo, bastar executar o comando abaixo informando o nom
 
 Get-AzADGroup -DisplayName 'nome_do_grupo'
 
-3- No passo de backup, informa o path que deseja utilizar para o backup e o nome do arquivo .CSV
+3- No passo de backup, informe o path que deseja utilizar para o backup:
 
 Get-AzADGroupMember -GroupObjectId $targetgroup | export-csv 'path:\backup.csv' 
 
-4- No campo abaixo, informar o path com o arquivo 'users.txt' previamente definido no passo 1 do script
+4- No campo abaixo, informar o path com o arquivo 'users.txt' previamente definido no passo 1 do script:
 
 $files = Get-Content "path:\users.txt"
 
-5- Execução do script
+5- Execução do script:
 
 foreach ($file in $files) {
     $move = Add-AzADGroupMember -TargetGroupObjectId $targetgroup -MemberObjectId $file 
