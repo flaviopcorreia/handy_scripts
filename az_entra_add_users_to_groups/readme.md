@@ -1,3 +1,7 @@
+# Objetivo
+
+Mover usuários para um grupo no Microsoft Entra.
+
 # Como usar
 
 1- Antes de utilizar este script, é necessário coletar o ID do usuários que queira adicionar ao grupo e colar em um arquivo chamado users.txt.
