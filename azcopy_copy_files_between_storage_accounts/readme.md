@@ -33,6 +33,7 @@ azcopy copy "origem/token" "destino/token" --recursive --log-level ERROR --cap-m
 [Opção de cópia 2] - Cópia os blobs enviando blobs HOT para o tier ARCHIVE e posteriormente mandar o restante dos dados com o tier original (HOT)
 
 azcopy copy "origem/token" "destino/token" --recursive --log-level ERROR --cap-mbps 51200 --include-before "2024-07-24T14:00:00Z" --blob-type BlockBlob --block-blob-tier Archive
+
 azcopy copy "origem/token" "destino/token" --recursive --log-level ERROR --cap-mbps 51200 --include-after "2024-07-24T14:00:00Z"
 
 5- Depois de fazer a primeira transferência, rodar o sync para transferir os arquivos que ficaram para trás ou foram criados no momento da copia.
