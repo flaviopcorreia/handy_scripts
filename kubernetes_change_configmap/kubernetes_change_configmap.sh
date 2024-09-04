@@ -1,4 +1,4 @@
-#Definir as variveis abaixo informando os valores pertinentes ao seu deployment e configmpa que no caso abaixo é o "data"
+#Definir as variveis abaixo informando os valores pertinentes ao seu deployment e configmap que no caso abaixo é o "data"
   
 CONFIGMAP_NAME="XXX"
 NAMESPACE="XXX"
@@ -12,8 +12,6 @@ kubectl patch configmap $CONFIGMAP_NAME -n $NAMESPACE -p "$JSON_PATCH"
 echo -e "\n Aguandado 30 segundos para mostrar o valor do configmap alterado"
 
 sleep 30
-
-#Alterar valor do grep
 
 #No valor do grep, informe a "key" usado na variavel $JSON_PATCH.
 
