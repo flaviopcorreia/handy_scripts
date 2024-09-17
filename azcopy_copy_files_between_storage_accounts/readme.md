@@ -40,6 +40,10 @@ azcopy copy "origem/token" "destino/token" --recursive --log-level ERROR --cap-m
 
 azcopy sync "origem/token" "destino/token" --recursive --log-level ERROR --cap-mbps 51200
 
+* Por padrão com esse comando, ele fará o scan de todos os arquivos no destino/origem. Com isso fazendo cache na memória. Em caso de muitos arquivos, esse consumo de memória pode travar a maquina. Como alternativa, pode usar o comando abaixo:
+
+azcopy copy "origem/token" "destino/token" --recursive --log-level ERROR --cap-mbps 51200 --overwrite ifSourceNewer
+
 7- Checar os logs:
 
 https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-configure
@@ -92,6 +96,10 @@ You can improve performance by reducing the number of log entries that AzCopy cr
 * Rodar benchmark para analisar melhor troughput a ser usado na copia de dado on-prem para azure:
 
 azcopy benchmark "(storage account destination)"
+
+* Por padrão com o comando "sync", ele fará o scan de todos os arquivos no destino/origem. Com isso fazendo cache na memória. Em caso de muitos arquivos, esse consumo de memória pode travar a maquina. Como alternativa, pode usar o comando abaixo:
+
+azcopy copy "origem/token" "destino/token" --recursive --log-level ERROR --cap-mbps 51200 --overwrite ifSourceNewer
 
 	- Limitar throught de rede
 
