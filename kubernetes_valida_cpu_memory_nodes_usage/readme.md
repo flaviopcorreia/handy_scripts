@@ -16,5 +16,5 @@ Filter nodes containing "VALOR_DA_BUSCA" in their name
       if "VALOR_DA_BUSCA" not in node_name:
             continue
             
-5- Após editar o arquivo, basta executa-lo "kubernetes_valida_cpu_memory_nodes_usage_XX.py"
+3- Após editar o arquivo, basta executa-lo "kubernetes_valida_cpu_memory_nodes_usage_XX.py"
 
