@@ -6,10 +6,10 @@ from azure.storage.blob import BlobServiceClient
 
 # Connection details
 namespace = "XXX"  # Your Event Hub namespace without suffix
-shared_access_key_name = "XXX"
-shared_access_key = "XX"
-eventhub_name = "XXXX"
-consumer_group = "XXXX"  # Your Event Hub consumer group
+shared_access_key_name = "XXX" # The shared access key name of your Event-HUB namespace (Not the topic).
+shared_access_key = "XX" # The shared access key of your Event-HUB namespace (Not the topic).
+eventhub_name = "XXXX" # The topic name of your Event-HUB namespace.
+consumer_group = "XXXX"  # Your Event Hub consumer group of your topic.
 container_name = "XXX"  # Blob container name for checkpoints
 storage_connection_str = "XXX"  # Azure Storage connection string
 
