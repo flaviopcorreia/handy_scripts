@@ -50,7 +50,7 @@ Write-Output "--- Checking the throughput unit value of the Event-HUB '$eventhub
 # Get the current Event Hub namespace details
 try {
     $currentEventHub = Get-AzEventHubNamespace -ResourceGroupName $resourceGroupName -NamespaceName $eventhub
-    $currentCapacity = $currentEventHub.Sku.Capacity
+    $currentCapacity = $currentEventHub.SkuCapacity
     $location = $currentEventHub.Location
 } catch {
     Write-Error "Failed to retrieve the Event Hub namespace. Error: $_"
