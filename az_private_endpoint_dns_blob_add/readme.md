@@ -36,4 +36,4 @@ read -p "Enter Storage Account Name: " STA_NAME
 read -p "Enter Environment (e.g., dev, hlg, prod): " ENV
 read -p "Enter Location: " LOCATION
 
-5- Baixar o arquivo "az_eventhub_scaledown_tus.ps1" e executa-lo.
+5- Baixar o arquivo "az_private_endpoint_dns_blob_add.sh" e executa-lo.
