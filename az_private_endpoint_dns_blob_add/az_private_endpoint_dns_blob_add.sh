@@ -75,4 +75,4 @@ az network private-endpoint create --connection-name $CONNECTION_NAME --name $PV
 echo -e "­ƒÜÇ Creating Private Endpoint custom DNS in the zone $PVT_DNS_NAME"
 
 # Create Private Endpoint DNS Zone Group "$PVT_DNS_CONFIGURATION_NAME" in the private zone $PVT_DNS_NAME in the shared subscription
-az network private-endpoint dns-zone-group create --resource-group $RESOURCE_GROUP --endpoint-name $PVE_NAME --name $PVT_DNS_ZONE_GROUP_NAME --zone-name $PVT_DNS_CONFIGURATION_NAME --private-dns-zone $PRIVATE_DNS_ZONE_ID
+az network private-endpoint dns-zone-group create --resource-group $RESOURCE_GROUP --endpoint-name $PVE_NAME --name $PVT_DNS_ZONE_GROUP_NAME --zone-name $PVT_DNS_CONFIGURATION_NAME --private-dns-zone $PRIVATE_DNS_ZONE_ID --tags $TAGS
