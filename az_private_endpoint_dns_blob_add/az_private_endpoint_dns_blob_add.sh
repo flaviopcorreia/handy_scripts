@@ -61,18 +61,18 @@ echo -e "\nCreating Private Endpoint: $PVE_NAME"
 EXISTING_PE=$(az network private-endpoint list --resource-group $RESOURCE_GROUP --query "[?privateLinkServiceConnections[?privateLinkServiceId=='$PVE_CONNECTION_ID']].id" --output tsv)
 
 if [[ -n "$EXISTING_PE" ]]; then
-    echo "Ô£à A private endpoint already exists for storage account '$STA_NAME'. Skipping creation."
+    echo "/nA private endpoint already exists for storage account '$STA_NAME'. Skipping creation."
     exit 0
 fi
 
-echo "­ƒÜÇ Creating Private Endpoint: $PVE_NAME"
+echo "­/nCreating Private Endpoint: $PVE_NAME"
 
 # Create Private Endpoint
 az network private-endpoint create --connection-name $CONNECTION_NAME --name $PVE_NAME \
     --private-connection-resource-id $PVE_CONNECTION_ID --resource-group $RESOURCE_GROUP \
     --subnet $SUBNET_ID --group-id $STA_GROUP_ID --vnet-name $VNET_NAME --tags $TAGS
 
-echo -e "­ƒÜÇ Creating Private Endpoint custom DNS in the zone $PVT_DNS_NAME"
+echo -e "­/nCreating Private Endpoint custom DNS in the zone $PVT_DNS_NAME"
 
 # Create Private Endpoint DNS Zone Group "$PVT_DNS_CONFIGURATION_NAME" in the private zone $PVT_DNS_NAME in the shared subscription
 az network private-endpoint dns-zone-group create --resource-group $RESOURCE_GROUP --endpoint-name $PVE_NAME --name $PVT_DNS_ZONE_GROUP_NAME --zone-name $PVT_DNS_CONFIGURATION_NAME --private-dns-zone $PRIVATE_DNS_ZONE_ID
