@@ -1,0 +1,114 @@
+#!/bin/bash
+set -e # This ensures that your script will immediately exit if any command fails, making it safer and easier to debug.
+#set -x # See each command as it runs (for debugging)
+
+# User-provided variables
+# Define tags (you can add as many as needed)
+TAGS="tier=network tier_type=privatelink"
+SUBSCRIPTION_NETWORK_ID="055299c1-9e0a-4d2d-afe7-2b1c6af40aac"
+PVT_DNS_RESOURCE_GROUP="network_vvonline"
+PVT_DNS_NAME_BLOB="privatelink.blob.core.windows.net"
+PVT_DNS_NAME_DFS="privatelink.dfs.core.windows.net"
+PVT_DNS_CONFIGURATION_NAME_BLOB="privatelink_blob_core_windows_net"
+PVT_DNS_CONFIGURATION_NAME_DFS="privatelink_dfs_core_windows_net"
+PVT_DNS_ZONE_GROUP_NAME="default"
+STA_GROUP_ID_BLOB="blob"
+STA_GROUP_ID_DFS="dfs"
+
+# Prompt user for input
+read -p "Enter Subscription ID: " SUBSCRIPTION_ID
+read -p "Enter Resource Group: " RESOURCE_GROUP
+read -p "Enter Storage Account Name: " STA_NAME
+read -p "Enter Environment (e.g., dev, hlg, prod): " ENV
+read -p "Enter Location: " LOCATION
+
+# Conditional assignment based on SUBSCRIPTION_ID
+if [[ "$SUBSCRIPTION_ID" == "cd7830ba-234d-4033-9d38-22306144b136" ]]; then
+    VNET_NAME="AZ_DEVHLG_BIGDATA"
+    VNET_RESOURCE_GROUP="rg-network"
+    SUBNET_NAME="snet-default"
+elif [[ "$SUBSCRIPTION_ID" == "f4e6253c-c926-4223-99db-d6c0e6790a86" ]]; then
+    VNET_NAME="AZ_BIGDATA"
+    VNET_RESOURCE_GROUP="RG-NETWORK"
+    SUBNET_NAME="snet-default"
+elif [[ "$SUBSCRIPTION_ID" == "e4128695-83c0-493e-89db-2095acf2d7c6" ]]; then
+    VNET_NAME="AZ_DATASCIENCE-PRD"
+    VNET_RESOURCE_GROUP="rg-network"
+    SUBNET_NAME="snet-datascience"
+else
+    read -p "Enter Virtual Network Name: " VNET_NAME
+    read -p "Enter Virtual Network Resource Group: " VNET_RESOURCE_GROUP
+    read -p "Enter Subnet Name: " SUBNET_NAME
+fi
+
+# Derived variables
+PVE_NAME_BLOB="pvtlink-$STA_GROUP_ID_BLOB-$STA_NAME-$ENV"
+PVE_NAME_DFS="pvtlink-$STA_GROUP_ID_DFS-$STA_NAME-$ENV"
+PVE_CONNECTION_ID=$(az storage account show --resource-group $RESOURCE_GROUP --name $STA_NAME --query '[id]' --output tsv)
+CONNECTION_NAME="$STA_NAME.001"
+SUBNET_ID=$(az network vnet subnet show --resource-group $VNET_RESOURCE_GROUP --vnet-name $VNET_NAME --name $SUBNET_NAME --query '[id]' --output tsv)
+
+# Set Azure subscription 
+az account set --subscription $SUBSCRIPTION_ID
+
+sleep 3
+
+# Check if the storage account is HN enabled
+STA_HN_ENABLED=$(az storage account show --name $STA_NAME --resource-group $RESOURCE_GROUP --query "isHnsEnabled")
+
+# Set Azure subscription SHARED
+az account set --subscription $SUBSCRIPTION_NETWORK_ID
+
+sleep 3
+
+# Conditional assignment based on Hierarchical Namespace of the storage account
+if [[ "$STA_HN_ENABLED" == "true" ]]; then
+    # Get the ID of the private dfs DNS zone in the shared subscription
+    PRIVATE_DFS_DNS_ZONE_ID=$(az network private-dns zone show --resource-group $PVT_DNS_RESOURCE_GROUP --name $PVT_DNS_NAME_DFS --query id --output tsv)
+    # Get the ID of the private blob DNS zone in the shared subscription
+    PRIVATE_BLOB_DNS_ZONE_ID=$(az network private-dns zone show --resource-group $PVT_DNS_RESOURCE_GROUP --name $PVT_DNS_NAME_BLOB --query id --output tsv)
+else
+    # Get the ID of the private blob DNS zone in the shared subscription
+    PRIVATE_BLOB_DNS_ZONE_ID=$(az network private-dns zone show --resource-group $PVT_DNS_RESOURCE_GROUP --name $PVT_DNS_NAME_BLOB --query id --output tsv)
+fi
+
+# Set Azure subscription of the storage account
+az account set --subscription $SUBSCRIPTION_ID
+
+sleep 3
+
+echo -e "\nChecking for existing Private Endpoints:"
+
+EXISTING_PE_BLOB=$(az network private-endpoint list --resource-group $RESOURCE_GROUP --query "[?privateLinkServiceConnections[?privateLinkServiceId=='$PVE_CONNECTION_ID']].id" --output tsv | grep blob || true)
+EXISTING_PE_DFS=$(az network private-endpoint list --resource-group $RESOURCE_GROUP --query "[?privateLinkServiceConnections[?privateLinkServiceId=='$PVE_CONNECTION_ID']].id" --output tsv | grep dfs || true)
+
+echo -e "\nCreate dfs private endpoint if it does not exist and HNS is enabled"
+
+if [[ "$STA_HN_ENABLED" == "true" ]]; then
+    if [[ -z "$EXISTING_PE_DFS" ]]; then
+        echo "\nCreating dfs private endpoint for storage account '$STA_NAME'..."
+        az network private-endpoint create --connection-name $CONNECTION_NAME --name $PVE_NAME_DFS \
+          --private-connection-resource-id $PVE_CONNECTION_ID --resource-group $RESOURCE_GROUP \
+          --subnet $SUBNET_ID --group-id $STA_GROUP_ID_DFS --vnet-name $VNET_NAME --tags $TAGS
+        echo -e "\nCreating Private Endpoint custom DNS in the zone $PVT_DNS_NAME_DFS"
+        az network private-endpoint dns-zone-group create --resource-group $RESOURCE_GROUP --endpoint-name $PVE_NAME_DFS --name $PVT_DNS_ZONE_GROUP_NAME --zone-name $PVT_DNS_CONFIGURATION_NAME_DFS --private-dns-zone $PRIVATE_DFS_DNS_ZONE_ID
+    else
+        echo "A dfs private endpoint already exists for storage account '$STA_NAME'."
+    fi
+fi
+
+echo -e "\nCreate blob private endpoint if it does not exist and HNS is disabled:"
+
+if [[ "$STA_HN_ENABLED" == "false" ]]; then
+    if [[ -z "$EXISTING_PE_BLOB" ]]; then
+        echo "Creating blob private endpoint for storage account '$STA_NAME'..."
+        az network private-endpoint create --connection-name $CONNECTION_NAME --name $PVE_NAME_BLOB \
+        --private-connection-resource-id $PVE_CONNECTION_ID --resource-group $RESOURCE_GROUP \
+        --subnet $SUBNET_ID --group-id $STA_GROUP_ID_BLOB --vnet-name $VNET_NAME --tags $TAGS
+        echo -e "/nCreating Private Endpoint custom DNS in the zone $PVT_DNS_NAME_BLOB"
+        az network private-endpoint dns-zone-group create --resource-group $RESOURCE_GROUP --endpoint-name $PVE_NAME_BLOB --name $PVT_DNS_ZONE_GROUP_NAME --zone-name $PVT_DNS_CONFIGURATION_NAME_BLOB --private-dns-zone $PRIVATE_BLOB_DNS_ZONE_ID
+    else
+        echo "A blob private endpoint already exists for storage account '$STA_NAME'."
+    fi
+fi
+
