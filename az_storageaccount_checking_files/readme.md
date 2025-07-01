@@ -1,6 +1,7 @@
 # Objetivo
 
-Conectar em uma storage account com acesso público habilitado e checar se existe alguns blobs .csv com um padrão de nome pré-determinada e com a data que no caso é todo dia 05 do mês e ano corrente. Se houver, vai apresentar como output a mensagem que o arquivo existe, se não, apresentará a mensagem que não existe. 
+Conectar em uma storage account com acesso público habilitado e checar se existem alguns blobs .csv com um padrão de nome pré-determinada e com a data que no caso é todo dia 05 do mês e ano corrente. Se houver, vai apresentar como output a mensagem que o arquivo existe, se não, apresentará a mensagem que não existe, posteriormente escreverá no diretório local definido na variavel "output_dir" o output.
+
 # Como usar
 
 1- Antes de utilizar este script, é necessário ter instalado o pyhton 3.12 e os pacotes abaixo:
