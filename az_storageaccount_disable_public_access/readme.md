@@ -1,6 +1,6 @@
 # Objetivo
 
-Fazer a autenticação na cloud e efetua o "disable" no acesso público das storages accounts previamente especificadas. Apresentará o output se o acesso está bloqueado ou não.
+Fazer a autenticação na cloud e efetuar o "disable" no acesso público das storages accounts previamente especificadas. Apresentará o output se o acesso está bloqueado ou não.
 
 # Como usar
 
