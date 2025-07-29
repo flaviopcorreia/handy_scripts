@@ -1,6 +1,6 @@
 # Connect to Azure
-Connect-AzAccount -UseDeviceAuthentication -Tenant 5a86b3fb-4213-49cd-b4d6-be91482ad3c0
-Set-AzContext -SubscriptionId "f4e6253c-c926-4223-99db-d6c0e6790a86"
+Connect-AzAccount -UseDeviceAuthentication -Tenant "XXX"
+Set-AzContext -SubscriptionId "XXX"
 
 # Define target storage accounts and their resource groups
 $targetAccounts = @(
